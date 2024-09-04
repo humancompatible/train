@@ -10,11 +10,11 @@ def printmd(string):
     display(Markdown(string))
         
 from sklearn.preprocessing import StandardScaler 
-from humancompatible.train.stochastic_ghost import StochasticGhost
 import argparse
 
 sys.path.append("..")  # Add parent directory to the sys.path
 
+#import StochasticGhost
 
 
 GENDER_IND = 2
@@ -285,11 +285,15 @@ if __name__ == "__main__":
     # Add argument for module name
     parser.add_argument("--model", type=str, help="Name of the model to import (backend_connect)")
 
+    # Add argument for Optimizer name
+    parser.add_argument("--optimizer", type=str, help="Optimizer Name (Default StochasticGhost)")
+
     # Parse command-line arguments
     args = parser.parse_args()
     model_name = args.model
+    optimizer_name = args.optimizer
     parent_dir = os.path.dirname(os.path.abspath(__file__))
-    sys.path.append(os.path.abspath(os.path.join(parent_dir, "..")))
+    sys.path.append(os.path.abspath(os.path.join(parent_dir, "../humancompatible/train")))
     # Dynamically import the specified module
     if model_name:
         model = importlib.import_module(model_name)
@@ -299,6 +303,16 @@ if __name__ == "__main__":
     else:
         # Import the default module if no module name is provided
         print("Please specify the model architecture")
+
+    # Import optimizer module
+    if optimizer_name:
+        optimizer = importlib.import_module(optimizer_name)
+    else:
+        # Default to StochasticGhost optimizer
+        optimizer = importlib.import_module("StochasticGhost")
+
+    print(f"Using model: {model_name}")
+    print(f"Using optimizer: {optimizer_name if optimizer_name else 'StochasticGhost'}")
 
     # Call the function from the imported module
     loss_bound=2e-3
@@ -337,9 +351,25 @@ if __name__ == "__main__":
         
         initw, num_param = net.get_trainable_params()
         # print(len(initw))
-        params = paramvals(maxiter=maxiter, beta=10., rho=1e-3, lamb=0.5, hess='diag', tau=2., mbsz=100,
-                        numcon=2, geomp=0.2, stepdecay='dimin', gammazero=0.1, zeta=0.4, N=num_trials, n=num_param, lossbound=[loss_bound, loss_bound], scalef=[1., 1.])
-        w, iterfs, itercs = StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
+        
+
+        """ Add a conditional block for your optimizer
+            In general, this module expects the optimizer to return the learned parameters (w in this case)
+            iterfs and itercs are just for plotting purposes
+            the function args could be: objective and constraint function, objective and constraint grads, sampling parameter etc
+            
+            StochasticGhost Optimizer takes:
+            operations.obj_fun : objective function definition
+            operations.obj_grad : objective function grads
+            list constraints : constraint functions (list)
+            list constraint grads : constraint function gradients (list)
+            initw : learnable parameters
+            params : the dictionary of hyperparameters (details described in StocgasticGhost module)
+        """
+        if optimizer_name == "StochasticGhost":
+            params = paramvals(maxiter=maxiter, beta=10., rho=1e-3, lamb=0.5, hess='diag', tau=2., mbsz=100,
+                            numcon=2, geomp=0.2, stepdecay='dimin', gammazero=0.1, zeta=0.4, N=num_trials, n=num_param, lossbound=[loss_bound, loss_bound], scalef=[1., 1.])
+            w, iterfs, itercs = optimizer.StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
         
         if np.isnan(w[0]).any():
             print("reached infeasibility not saving the model")
@@ -371,6 +401,6 @@ if __name__ == "__main__":
     df_ctrial2 = pd.DataFrame(ctrial2, columns=range(1, ctrial2.shape[1]+1), index=range(1, ctrial2.shape[0]+1))
 
     # Save DataFrames to CSV files
-    df_ftrial.to_csv('../utils/income_ftrial_new.csv')
-    df_ctrial1.to_csv('../utils/income_ctrial1_new.csv')
-    df_ctrial2.to_csv('../utils/income_ctrial2_new.csv')
+    df_ftrial.to_csv('../utils/income_ftrial_'+str(loss_bound)+'.csv')
+    df_ctrial1.to_csv('../utils/income_ctrial1_'+str(loss_bound)+'.csv')
+    df_ctrial2.to_csv('../utils/income_ctrial2_'+str(loss_bound)+'.csv')

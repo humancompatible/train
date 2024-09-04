@@ -44,7 +44,7 @@ class CustomNetwork(nn.Module):
         if torch.isnan(loss).any():
             for name, param in self.named_parameters():
                 print(name)
-                print(param.data)
+                #print(param.data)
         return loss
     
     def get_obj(self, x, y, params):
@@ -54,11 +54,12 @@ class CustomNetwork(nn.Module):
         for i in range(len(params)):
             model_parameters[i].data = torch.Tensor(params[i])
         obj_fwd = self.forward(x).flatten()
+        #print("forward In OBJ: ", obj_fwd)
         if torch.isnan(obj_fwd).any():
             #print("THE MINIBATCH SIZE>>>>>",minibatch)
             for name, param in self.named_parameters():
                 print(name)
-                print(param.data)
+                #print(param.data)
         fval = self.compute_loss(obj_fwd, y.flatten())
         return fval.item()
     
