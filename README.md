@@ -40,3 +40,7 @@ python income.py --help
 model values: pytorch_connect, tensorflow_connect
 optimizer values: StochasticGhost
 
+installations: 
+
+> pip install StochasticGhost
+
