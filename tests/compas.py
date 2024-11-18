@@ -361,6 +361,9 @@ if __name__ == "__main__":
     df_ctrial2 = pd.DataFrame(ctrial2, columns=range(1, ctrial2.shape[1]+1), index=range(1, ctrial2.shape[0]+1))
 
     # Save DataFrames to CSV files
+    utils_path = '../utils' 
+    if not os.path.exists(utils_path):
+        os.makedirs(utils_path)
     df_ftrial.to_csv('../utils/compas_ftrial_'+str(loss_bound)+'.csv')
     df_ctrial1.to_csv('../utils/compas_ctrial1_'+str(loss_bound)+'.csv')
     df_ctrial2.to_csv('../utils/compas_ctrial2_'+str(loss_bound)+'.csv')
