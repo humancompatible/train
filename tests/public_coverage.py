@@ -485,7 +485,8 @@ if __name__ == "__main__":
         optimizer = importlib.import_module(optimizer_name)
     else:
         # Default to StochasticGhost optimizer
-        optimizer = importlib.import_module("StochasticGhost")
+        optimizer_name = 'StochasticGhost'
+        from humancompatible.train.stochastic_ghost import StochasticGhost
 
     print(f"Using model: {model_name}")
     print(f"Using optimizer: {optimizer_name if optimizer_name else 'StochasticGhost'}")
@@ -553,7 +554,7 @@ if __name__ == "__main__":
         if optimizer_name == "StochasticGhost":
             params = paramvals(maxiter=maxiter, beta=10., rho=1e-3, lamb=0.5, hess='diag', tau=16., mbsz=100,
                             numcon=4, geomp=0.2, stepdecay='dimin', gammazero=0.1, zeta=0.4, N=num_trials, n=num_param, lossbound=loss_bound_list, scalef=scalef_list)
-            w, iterfs, itercs = optimizer.StochasticGhost(operations.obj_fun, operations.obj_grad, cons_list, cons_grad_list, initw, params)
+            w, iterfs, itercs = StochasticGhost(operations.obj_fun, operations.obj_grad, cons_list, cons_grad_list, initw, params)
         
         if np.isnan(w[0]).any():
             print("reached infeasibility not saving the model")
@@ -598,6 +599,9 @@ if __name__ == "__main__":
     #df_ctrial6 = pd.DataFrame(ctrial6, columns=range(1, ctrial6.shape[1]+1), index=range(1, ctrial6.shape[0]+1))
 
     # Save DataFrames to CSV files
+    utils_path = '../utils' 
+    if not os.path.exists(utils_path):
+        os.makedirs(utils_path)
     df_ftrial.to_csv('../utils/coverage_ftrial_'+str(loss_bound)+'.csv')
     df_ctrial1.to_csv('../utils/coverage_ctrial1_'+str(loss_bound)+'.csv')
     df_ctrial2.to_csv('../utils/coverage_ctrial2_'+str(loss_bound)+'.csv')
