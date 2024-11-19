@@ -139,7 +139,7 @@ class CustomNetwork(nn.Module):
         return torch.Tensor(obj)
     
     def save_model(self, dir):
-        torch.save(self, str(dir)+'.pth')
+        torch.save(self.state_dict(), str(dir)+'.pt')
 
     def get_trainable_params(self):
         nn_parameters = list(self.parameters())
@@ -153,6 +153,13 @@ class CustomNetwork(nn.Module):
         return predictions.detach().numpy()
     
 def load_model(directory_path, model_file):
-        model = torch.load(os.path.join(directory_path, model_file), map_location=torch.device('cpu'))
+        # load state dict
+        state_dict = torch.load(os.path.join(directory_path, model_file), map_location=torch.device('cpu'))
+        # extract layer shapes from dict
+        weight_shapes = [v.shape for k,v in state_dict.items() if k.endswith('weight')]
+        # input shapes of each layer plus output shape of last
+        layer_shapes = [ws[1] for ws in weight_shapes] + [weight_shapes[-1][0]]
+        model = CustomNetwork(model_specs=[layer_shapes])
+        model.load_state_dict(state_dict)
         return model
 
