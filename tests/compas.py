@@ -15,8 +15,6 @@ from sklearn.preprocessing import StandardScaler
 
 sys.path.append("..")  # Add parent directory to the sys.path
 
-import StochasticGhost
-
 
 RACE_IND = 4
 SENSITIVE_CODE_0 = 0
@@ -272,9 +270,12 @@ if __name__ == "__main__":
     # Add argument for module name
     parser.add_argument("--model", type=str, help="Name of the model to import (backend_connect)")
 
+    parser.add_argument("--optimizer", type=str, help="Optimizer Name (Default StochasticGhost)")
+
     # Parse command-line arguments
     args = parser.parse_args()
     model_name = args.model
+    optimizer_name = args.optimizer
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.append(os.path.abspath(os.path.join(parent_dir, "../humancompatible/train")))
     # Dynamically import the specified module
@@ -285,8 +286,14 @@ if __name__ == "__main__":
         CustomNetwork = getattr(model, "CustomNetwork")
     else:
         # Import the default module if no module name is provided
-        from pytorch_connect import CustomNetwork
+        print("Please specify the model architecture")
+    
 
+    if optimizer_name:
+        optimizer = importlib.import_module(optimizer_name)
+    else:
+        # Default to StochasticGhost optimizer
+        from humancompatible.train.stochastic_ghost import StochasticGhost
 
     loss_bound=2e-3
     trials = 21
@@ -323,7 +330,7 @@ if __name__ == "__main__":
         initw, num_param = net.get_trainable_params()
         params = paramvals(maxiter=maxiter, beta=10., rho=1e-3, lamb=0.5, hess='diag', tau=2., mbsz=100,
                         numcon=2, geomp=0.2, stepdecay='dimin', gammazero=0.1, zeta=0.7, N=num_trials, n=num_param, lossbound=[loss_bound, loss_bound], scalef=[1., 1.])
-        w, iterfs, itercs = StochasticGhost.StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
+        w, iterfs, itercs = StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
         
         if np.isnan(w[0]).any():
             print("reached infeasibility not saving the model")
@@ -354,6 +361,9 @@ if __name__ == "__main__":
     df_ctrial2 = pd.DataFrame(ctrial2, columns=range(1, ctrial2.shape[1]+1), index=range(1, ctrial2.shape[0]+1))
 
     # Save DataFrames to CSV files
+    utils_path = '../utils' 
+    if not os.path.exists(utils_path):
+        os.makedirs(utils_path)
     df_ftrial.to_csv('../utils/compas_ftrial_'+str(loss_bound)+'.csv')
     df_ctrial1.to_csv('../utils/compas_ctrial1_'+str(loss_bound)+'.csv')
     df_ctrial2.to_csv('../utils/compas_ctrial2_'+str(loss_bound)+'.csv')

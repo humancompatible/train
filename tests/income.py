@@ -309,7 +309,7 @@ if __name__ == "__main__":
         optimizer = importlib.import_module(optimizer_name)
     else:
         # Default to StochasticGhost optimizer
-        optimizer = importlib.import_module("StochasticGhost")
+        from humancompatible.train.stochastic_ghost import StochasticGhost
 
     print(f"Using model: {model_name}")
     print(f"Using optimizer: {optimizer_name if optimizer_name else 'StochasticGhost'}")
@@ -366,10 +366,10 @@ if __name__ == "__main__":
             initw : learnable parameters
             params : the dictionary of hyperparameters (details described in StocgasticGhost module)
         """
-        if optimizer_name == "StochasticGhost":
+        if optimizer_name == "StochasticGhost" or not optimizer_name:
             params = paramvals(maxiter=maxiter, beta=10., rho=1e-3, lamb=0.5, hess='diag', tau=2., mbsz=100,
                             numcon=2, geomp=0.2, stepdecay='dimin', gammazero=0.1, zeta=0.4, N=num_trials, n=num_param, lossbound=[loss_bound, loss_bound], scalef=[1., 1.])
-            w, iterfs, itercs = optimizer.StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
+            w, iterfs, itercs = StochasticGhost(operations.obj_fun, operations.obj_grad, [operations.conf1, operations.conf2], [operations.conJ1, operations.conJ2], initw, params)
         
         if np.isnan(w[0]).any():
             print("reached infeasibility not saving the model")
@@ -401,6 +401,9 @@ if __name__ == "__main__":
     df_ctrial2 = pd.DataFrame(ctrial2, columns=range(1, ctrial2.shape[1]+1), index=range(1, ctrial2.shape[0]+1))
 
     # Save DataFrames to CSV files
+    utils_path = '../utils' 
+    if not os.path.exists(utils_path):
+        os.makedirs(utils_path)
     df_ftrial.to_csv('../utils/income_ftrial_'+str(loss_bound)+'.csv')
     df_ctrial1.to_csv('../utils/income_ctrial1_'+str(loss_bound)+'.csv')
     df_ctrial2.to_csv('../utils/income_ctrial2_'+str(loss_bound)+'.csv')
