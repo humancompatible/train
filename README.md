@@ -22,3 +22,5 @@ To add a new algorithm, you can subclass the ```Algorithm``` class.
 ## Plots!
 
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
+
+**Warning**: As of 15/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible.
