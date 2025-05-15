@@ -2,6 +2,7 @@
 
 experiments/utils/raw_data/
 experiments/utils/exp_results
+experiments/utils/saved_models
 data/
 .vscode/
 plots/
