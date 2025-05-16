@@ -50,6 +50,8 @@ if __name__ == "__main__":
     parser.add_argument('-constraint', '--constraint', type=str)
     parser.add_argument('-alg_name', '--alg_name', type=str, nargs='?', const='', default='')
     parser.add_argument('-device', '--device', type=str)
+    parser.add_argument('--download', action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument('--data_path', nargs='?', type=str, default=None,const=None)
     
     ### algorithm parameters
     parser.add_argument('-maxiter', '--maxiter', nargs='?', const=None, type=int)
@@ -94,6 +96,8 @@ if __name__ == "__main__":
     TASK = args.task
     ALG_CUSTOM_NAME = args.alg_name
     MAX_TIME = args.time
+    DOWNLOAD_DATA = args.download
+    DATA_PATH = args.data_path
     
     if ALG_TYPE.startswith('sgd'):
         epochs = args.epochs
@@ -168,7 +172,7 @@ if __name__ == "__main__":
     DATASET_NAME = FT_DATASET + '_' + FT_STATE
     
     X_train, y_train, [w_idx_train, nw_idx_train], X_test, y_test, [w_idx_test, nw_idx_test] = load_folktables_torch(
-        FT_DATASET, state=FT_STATE.upper(), random_state=42, make_unbalanced = False, onehot=False
+        FT_DATASET, state=FT_STATE.upper(), random_state=42, make_unbalanced = False, onehot=False, download=DOWNLOAD_DATA, path=DATA_PATH
     )
     
     pos_idx_train = np.argwhere(y_train == 1).flatten()
