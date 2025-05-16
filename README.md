@@ -7,9 +7,8 @@ This repository provides a tool to compare stochastic-constrained stochastic opt
 ## Table of Contents
 1. [Basic installation instructions](#basic-installation-instructions)
 2. [Reproducing the Benchmark](#reproducing-the-benchmark)
-3. [Extending the benchmark](#extending-the-benchmark)
-<!-- 6. [Citing humancompatible/train](#Citing-humancompatible/train) -->
-4. [Licence and terms of use](#Licence-and-terms-of-use)
+3. [Extending the benchmark](#extending-the-benchmark) <!-- 6. [Citing humancompatible/train](#Citing-humancompatible/train) -->
+4. [License and terms of use](#license-and-terms-of-use)
 5. [References](#references)
 
 Humancompatible/train is still under active development! If you find bugs or have feature
@@ -24,17 +23,17 @@ The code requires Python version ```3.10```.
 python3.10 -m venv fairbenchenv
 source fairbenchenv/bin/activate
 ```
-2. 
-<!-- Install via pip -->
-<!-- ``` -->
-<!-- pip install folktables -->
-<!-- ``` -->
-Install from source.
+2. Install from source.
 ```
 git clone https://github.com/humancompatible/train.git
 cd train
 pip install -r requirements.txt
 ```
+<!-- Install via pip -->
+<!-- ``` -->
+<!-- pip install folktables -->
+<!-- ``` -->
+
 
 ## Reproducing the Benchmark
 
@@ -60,7 +59,7 @@ To add a new algorithm, you can subclass the ```Algorithm``` class.
 
 ## License and terms of use
 
-Humancompatible/train is provided under the MIT Licence.
+Humancompatible/train is provided under the Apache 2.0 Licence.
 
 The package relies on the Folktables package, provided under MIT Licence.
 It provides code to download data from the American Community Survey
