@@ -1,46 +1,26 @@
-# humancompatible.train
+# Benchmarking Stochastic Approximation Algorithms for Fairness-Constrained Training of Deep Neural Networks
 
-Fairness-constrained training of machine learning models in TensorFlow, PyTorch, and beyond
+This repository provides a tool to compare stochastic-constrained stochastic optimization algorithms on a _fair learning_ task.
 
-This module provides a framework for testing and enforcing fairness in machine learning algorithms using Stochastic Approximation techniques. It serves as a benchmark for evaluating the performance of various algorithms under fairness constraints.   
+## Dependencies
 
-Features:
+This code requires Python version ```3.10```. All dependencies are listed in the ```requirements.txt``` file and can be installed by running ```pip install -r requirements.txt```.
 
-Implements Empirical Risk Minimization (ERM) with fairness constraints.
-Supports multiple fairness constraints such as demographic parity, equalized odds, and others.
-Utilizes Stochastic Approximation techniques to efficiently handle large datasets and complex models.
-Provides tools for benchmarking the fairness and performance of different algorithms.
+## Reproducibility
 
+To reproduce the experiments in the paper, run ```experiments/run_folktables.py``` with the dataset name, algorithm name and hyperparameters as command line arguments, like below:
 
-Requirements:
+```run_folktables.py --algorithm 'sslalm' --state 'OK' --task 'income' --constraint 'loss' --loss_bound 0.005 --num_exp 10 --time 30 --batch_size 8 -mu 2. -rho 1. -tau 0.01 -eta 5e-2 -beta 0.5```
 
-Python :
+This will start 10 runs of the SSL-ALM algorithm, 30 seconds each, and save the model and the results in the ```experiments/utils/saved_models``` and ```experiments/utils/exp_results``` folders.
 
-Python 3.10
+## Running your own experiments
 
-Libraries:
+To add a different constraint formulation, you can use the ```FairnessConstraint``` class by passing your callable function to the constructor as ```fn```.
+To add a new algorithm, you can subclass the ```Algorithm``` class.
 
-numpy
-scipy
-qpsolvers
-autoray
-pytorch
-tensorflow
-StochasticGhost
+## Plots!
 
+The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
 
-Running the benchmark:
-
-python income.py --model "{backend name}" --optimizer "{optimizer name}"
-
-Help:
-
-python income.py --help 
-
-model values: pytorch_connect, tensorflow_connect
-optimizer values: StochasticGhost
-
-installations: 
-
-> pip install StochasticGhost
-
+**Warning**: As of 15/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible.
