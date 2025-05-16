@@ -68,7 +68,7 @@ For more information, see https://www.census.gov/data/developers/about/terms-of-
 
 <!-- ## Cite this work -->
 
-<!-- If you use this work, we encourage you to cite our paper, and the folktable dataset [[1]](#1). -->
+<!-- If you use this work, we encourage you to cite our paper, and the folktables dataset [[1]](#1). -->
 
 <!-- ``` -->
 <!-- @article{ding2021retiring, -->
@@ -79,6 +79,10 @@ For more information, see https://www.census.gov/data/developers/about/terms-of-
 <!--   year={2021} -->
 <!-- } -->
 <!-- ``` -->
+
+
+**Warning**: As of 16/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/; use the flag ```--no-download```. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). A custom path can be specified with the --data_path argument, but it has to have the form `*/{year}/{horizon}/`.
+
 
 ## References
 
@@ -94,5 +98,3 @@ Huang, Zhang & Alacaoglu (2025) Stochastic Smoothed Primal-Dual Algorithms for N
 <a id="4">[4]</a> 
 Huang & Lin (2023) Oracle Complexity of Single-Loop Switching Subgradient Methods for Non-Smooth Weakly Convex Functional Constrained Optimization, Curran Associates Inc..
 
-
-**Warning**: As of 16/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/; use the flag ```--no-download```. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). A custom path can be specified with the --data_path argument, but it has to have the form `*/{year}/{horizon}/`.
