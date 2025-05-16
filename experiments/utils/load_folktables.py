@@ -11,11 +11,14 @@ from folktables import ACSDataSource, ACSPublicCoverage, ACSEmployment, ACSIncom
 
 RAC1P_WHITE = 1
 
-def load_folktables_torch(dataset: str = 'employment', state='AL', random_state=None, onehot=True, make_unbalanced=False):
-    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'raw_data', dataset))
+def load_folktables_torch(dataset: str = 'employment', state='AL', random_state=None, onehot=True, make_unbalanced=False, download=False, path=None):
+    if path is None:
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'raw_data', dataset))
+    else:
+        data_dir = path
     data_source = ACSDataSource(survey_year=2018, horizon='1-Year', survey='person', root_dir=data_dir)
-    definition_df = data_source.get_definitions(download=True)
-    acs_data = data_source.get_data(states=[state], download=True)
+    definition_df = data_source.get_definitions(download=download)
+    acs_data = data_source.get_data(states=[state], download=download)
     # group here refers to race (RAC1P)
     if dataset == 'employment':
         features, label, group = ACSEmployment.df_to_numpy(acs_data)
