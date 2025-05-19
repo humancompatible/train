@@ -55,8 +55,6 @@ class SSLPD(Algorithm):
                 if max_runtime > 0 and current_time - run_start >= max_runtime:
                     break
                 
-                
-                
                 ########################
                 ## UPDATE MULTIPLIERS ##
                 ########################
@@ -82,17 +80,16 @@ class SSLPD(Algorithm):
                 if f_labels.dim() < outputs.dim():
                     f_labels = f_labels.unsqueeze(1)
                 loss_eval = self.loss_fn(outputs, f_labels)
-                loss_eval.backward() # loss grad
-                f_grad = net_grads_to_tensor(self.net)
-                f_grad = torch.concat([f_grad, torch.zeros(m)]) # add zeros for slack vars
+                f_grad = torch.autograd.grad(loss_eval, self.net.parameters())
+                f_grad = torch.concat([*[g.flatten() for g in f_grad], torch.zeros(m)]) # add zeros for slack vars
                 self.net.zero_grad()
                 
                 # constraint grad estimate
                 c_grad = []
                 for ci in c_1:
-                    ci.backward()
-                    ci_grad = net_grads_to_tensor(self.net)
-                    c_grad.append(torch.concat([ci_grad, slack_vars.grad]))
+                    ci_grad = torch.autograd.grad(ci, self.net.parameters())
+                    slack_grad = torch.autograd.grad(ci, slack_vars)
+                    c_grad.append(torch.concat([*[g.flatten() for g in ci_grad], *slack_grad]))
                     self.net.zero_grad()
                     slack_vars.grad = None
                 c_grad = torch.stack(c_grad)
@@ -101,6 +98,7 @@ class SSLPD(Algorithm):
                 with torch.no_grad():
                     c_sample = [ci.sample_loader() for ci in c]
                     c_2 = torch.concat([ci.eval(self.net, c_sample[i]).reshape(1) + slack_vars[i] for i, ci in enumerate(c)])
+                
                 x_t = torch.concat([
                     net_params_to_tensor(self.net, flatten=True, copy=True),
                     slack_vars
@@ -136,19 +134,18 @@ class SSLPD(Algorithm):
             f_labels = f_labels.unsqueeze(1)
         loss_eval = self.loss_fn(outputs, f_labels)
         # loss grad
-        loss_eval.backward()
-        f_grad = net_grads_to_tensor(self.net)
-        f_grad = torch.concat([f_grad, torch.zeros(m)]) # add zeros for slack vars
+        loss_eval = self.loss_fn(outputs, f_labels)
+        f_grad = torch.autograd.grad(loss_eval, self.net.parameters())
+        f_grad = torch.concat([*[g.flatten() for g in f_grad], torch.zeros(m)])# add zeros for slack vars
         self.net.zero_grad()
         # constraint grad estimate
         c_1 = [ci.eval(self.net, c_sample[i]).reshape(1) + slack_vars[i] for i, ci in enumerate(c)]
         c_grad = []
         for ci in c_1:
-            ci.backward()
-            ci_grad = net_grads_to_tensor(self.net)
-            c_grad.append(torch.concat([ci_grad, slack_vars.grad]))
+            ci_grad = torch.autograd.grad(ci, self.net.parameters())
+            slack_grad = torch.autograd.grad(ci, slack_vars)
+            c_grad.append(torch.concat([*[g.flatten() for g in ci_grad], *slack_grad]))
             self.net.zero_grad()
-            slack_vars.grad = None
         c_grad = torch.stack(c_grad)
         
         # independent constraint estimate

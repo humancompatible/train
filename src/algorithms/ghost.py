@@ -134,8 +134,8 @@ class StochasticGhost(Algorithm):
                     outs = outs.squeeze(1)
                 feval = self.loss_fn(outs, obj_batch[1])
         
-                feval.backward()
-                dfdw = net_grads_to_tensor(self.net, clip=False)
+                dfdw = torch.autograd.grad(feval, self.net.parameters())
+                dfdw = torch.concat([dfdwi.flatten() for dfdwi in dfdw])
                 
                 # calculate autograd jacobian of self.constraints fun w.r.t. params
                 
@@ -145,15 +145,15 @@ class StochasticGhost(Algorithm):
                     self.net.zero_grad()
                     # print(j, i)
                     c_val = c.eval(self.net, c_batch[i])
-                    c_val.backward()
-                    c_grad = net_grads_to_tensor(self.net, clip=False).detach().numpy()
+                    
+                    c_grad = torch.autograd.grad(c_val, self.net.parameters())
+                    c_grad = torch.concat([cg.flatten() for cg in c_grad]).detach().numpy()
+                    
                     constraint_eval.append(c_val.detach())
                     dcdw.append(c_grad)
                     
                 constraint_eval = np.array(constraint_eval)
                 dcdw = np.array(dcdw)
-                
-                # self.history['constr'].append(np.array([c1_val.detach().numpy(), c2_val.detach().numpy()]))
                 
                 kappa = self.compute_kappa(constraint_eval, dcdw, rho, lamb, mc=2, n=len(dfdw))
                 

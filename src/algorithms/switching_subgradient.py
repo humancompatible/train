@@ -83,8 +83,10 @@ class SSSG(Algorithm):
                     c_sample = [ci.sample_loader() for ci in self.constraints]
                     c_t2 = torch.concat([ci.eval(self.net, c_sample[i]).reshape(1) for i, ci in enumerate(self.constraints)])
                     c_max2 = torch.max(c_t2)
-                    c_max2.backward()
-                    c_grad = net_grads_to_tensor(self.net)
+                    
+                    c_grad = torch.autograd.grad(c_max2, self.net.parameters())
+                    c_grad = torch.concat([cg.flatten() for cg in c_grad])
+                    
                     if c_stepsize_rule == 'adaptive':
                         c_eta_t = c_max / torch.norm(c_grad)**2
                     elif c_stepsize_rule == 'const':
@@ -102,9 +104,10 @@ class SSSG(Algorithm):
                     if f_labels.dim() < outputs.dim():
                         f_labels = f_labels.unsqueeze(1)
                     loss_eval = self.loss_fn(outputs, f_labels)
-                    loss_eval.backward()
                     self.history['loss'].append(loss_eval.cpu().detach().numpy())
-                    f_grad = net_grads_to_tensor(self.net)
+                    
+                    f_grad = torch.autograd.grad(loss_eval, self.net.parameters())
+                    f_grad = torch.concat([fg.flatten() for fg in f_grad])
                     
                     if f_stepsize_rule == 'dimin':
                         f_eta_t = f_stepsize / np.sqrt(f_iters)
