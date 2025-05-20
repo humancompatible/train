@@ -1,6 +1,11 @@
-batch_size: 8
-mu: 2.
-rho: 1.
-tau: 0.01
-eta: 5e-2
-beta: 0.5
+import_name: SSLALM
+
+params:
+  batch_size: 8
+  epochs: null
+  lambda_bound: 10
+  mu: 2.
+  rho: 1.
+  tau: 0.01
+  eta: 5e-2
+  beta: 0.5

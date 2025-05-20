@@ -1,0 +1,11 @@
+alg: ???
+
+constraint: loss
+loss_bound: 0.005
+
+data: ???
+
+n_runs: 10
+run_maxtime: 15
+run_maxiter: null
+device: cpu

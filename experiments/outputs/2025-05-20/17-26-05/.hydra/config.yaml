@@ -1,0 +1,22 @@
+alg:
+  import_name: SSLALM
+  params:
+    batch_size: 8
+    epochs: null
+    lambda_bound: 10
+    mu: 2.0
+    rho: 1.0
+    tau: 0.01
+    eta: 0.05
+    beta: 0.5
+constraint: loss
+loss_bound: 0.005
+data:
+  task: income
+  state: OK
+  download: false
+  path: C:\Users\andre\humancompatible-train\experiments\utils\raw_data\income\
+n_runs: 10
+run_maxtime: 10
+run_maxiter: null
+device: cpu
