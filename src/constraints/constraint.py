@@ -1,6 +1,6 @@
 import torch
+from torch.utils.data import SubsetRandomSampler, DataLoader
 from typing import Iterable, Callable
-from itertools import cycle
 import numpy as np
 
 
@@ -8,6 +8,17 @@ def _dataloader_from_subset(dataset, indices, *args, **kwargs):
     data_s = torch.utils.data.Subset(dataset, indices)
     loader_s = torch.utils.data.DataLoader(data_s, *args, **kwargs)
     return loader_s
+
+
+def _make_dataloaders(dataset, group_indices, batch_size, seed):
+    g = torch.Generator()
+    if seed is not None:
+        g.manual_seed(seed)
+    dataloaders = []
+    for idx in group_indices:
+        sampler = SubsetRandomSampler(idx, g)
+        dataloaders.append(iter(DataLoader(dataset, batch_size, sampler=sampler)))
+    return dataloaders
 
 
 class FairnessConstraint:
@@ -24,27 +35,16 @@ class FairnessConstraint:
         self.group_sets = [
             torch.utils.data.Subset(dataset, idx) for idx in group_indices
         ]
+        self._group_indices = group_indices
         self.fn = fn
-        self.seed = seed
-        self.rng = np.random.default_rng(seed)
+        self._seed = seed
+        self._rng = np.random.default_rng(seed)
         if batch_size is not None:
-            self.batch_size = batch_size
+            self._batch_size = batch_size
             if use_dataloaders:
-                g = torch.Generator()
-                if seed is not None:
-                    g.manual_seed(seed)
-                self.dataloaders = [
-                    cycle(
-                        _dataloader_from_subset(
-                            dataset,
-                            idx,
-                            batch_size=batch_size,
-                            shuffle=True,
-                            generator=g,
-                        )
-                    )
-                    for idx in group_indices
-                ]
+                self.group_dataloaders = _make_dataloaders(
+                    dataset, group_indices, batch_size, seed
+                )
 
     def group_sizes(self):
         return [len(group) for group in self.group_sets]
@@ -53,13 +53,20 @@ class FairnessConstraint:
         return self.fn(net, sample, **kwargs)
 
     def sample_loader(self):
-        return [next(l) for l in self.dataloaders]
+        try:
+            sample = [next(l) for l in self.group_dataloaders]
+        except StopIteration:
+            self.group_dataloaders = _make_dataloaders(
+                self.dataset, self._group_indices, self._batch_size, self._seed
+            )
+            sample = [next(l) for l in self.group_dataloaders]
+        return sample
 
     def sample_dataset(
         self, N, rng: np.random.Generator = None, indices=None, return_indices=False
     ):
         if rng is None:
-            rng = self.rng
+            rng = self._rng
 
         if indices is None:
             indices = []
