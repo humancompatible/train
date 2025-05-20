@@ -1,0 +1,12 @@
+algorithm: sslalm
+
+constraint: loss
+loss_bound: 0.005
+
+task: income
+state: OK
+download: False
+path: None
+
+n_runs: 10
+run_time: 30
