@@ -199,10 +199,6 @@ def run(cfg: DictConfig) -> None:
         if False:
             pass
         else:
-            optimizer_name = cfg.alg.import_name
-            module = importlib.import_module("src.algorithms")
-            Optimizer = getattr(module, optimizer_name)
-
             constraint_fn_module = importlib.import_module("src.constraints.constraint_fns")
             constraint_fn = getattr(constraint_fn_module, 'one_sided_loss_constr')
 
@@ -225,6 +221,10 @@ def run(cfg: DictConfig) -> None:
                 batch_size=cfg.alg.params.batch_size,
                 seed=EXP_IDX,
             )
+            
+            optimizer_name = cfg.alg.import_name
+            module = importlib.import_module("src.algorithms")
+            Optimizer = getattr(module, optimizer_name)
 
             optimizer = Optimizer(net, train_ds, loss_fn, [c1, c2])
             history = optimizer.optimize(

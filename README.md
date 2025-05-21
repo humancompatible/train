@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 ### Running the algorithms
 
-This repository uses [Hydra](https://hydra.cc/) to manage parameters; Hydra is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
+This repository uses [Hydra](https://hydra.cc/) to manage parameters; it is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
 * To change the parameters of the experiment - the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
 * To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name.yaml}`
 * To change algorithm hyperparameters, use `alg/{algorithm_name.yaml}`.
@@ -57,15 +57,25 @@ The benchmark comprises the following algorithms:
 ### Producing plots
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
 
-**Warning**: As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict/; use the flag ```--no-download```. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). A custom path can be specified with the --data_path argument; `folktables` will look for .csv files at `{custom_path}/{year}/{horizon}/`.
+**Warning**: As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that `folktables` will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
 
 ## Extending the benchmark
 
 To add a different constraint formulation, you can use the ```FairnessConstraint``` class by passing your callable function to the constructor as ```fn```.
 
 To add a new algorithm, you can subclass the ```Algorithm``` class. Before you can run it, you will need to follow these steps:
-1. In `src/__init__.py`, add `from .{filename} import {ClassName}`;
-2. In the `experiments/conf/alg` folder, add a `.yaml` file with `import_name: {ClassName}` and the desired hyperparameter values.
+1. In the `experiments/conf/alg` folder, add a `.yaml` file with `import_name: {ClassName}` (so the code knows which algorithm to import) and the desired keyword parameter values under `params`:
+
+```
+import_name: ClassName
+
+params:
+  param_name_1: value
+  param_name_2: value
+```
+
+2. In `src/__init__.py`, add `from .{filename} import {ClassName}` (so the code is able to import it).
+
 Now you can run the algorithm by executing `python run_folktables.py +data=folktables +alg={yaml_file_name}`.
 
 ## License and terms of use
@@ -94,8 +104,9 @@ For more information, see https://www.census.gov/data/developers/about/terms-of-
 
 ## Future work
 
-- Add support for fairness constraints with >=2 subgroups
+- Add support for fairness constraints with >=2 subgroups (limitation of the code, not of the algorithms)
 - Add support to datasets besides Folktables
+- Move towards a more PyTorch-like API for optimizers
 
 ## References
 
