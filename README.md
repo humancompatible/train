@@ -77,9 +77,12 @@ params:
 
 Now you can run the algorithm by executing `python run_folktables.py data=folktables alg={yaml_file_name}`, or by changing the experiment config files.
 
-**To add a different constraint formulation**, you can use the `FairnessConstraint` class by passing your callable function to the constructor as `fn`.
-Add a `.yaml` file with `import_name: {FunctionName}`, along with the desired batch size and bound (*to be reworked for more generality*), to the `experiments/conf/constraint` folder, and import it in `src/constraints/__init__.py` the same way as above.
-To run the code with your constraint, use the `constraint` field in the main config.
+**To add a different constraint formulation**, you can use the `FairnessConstraint` class by passing your callable function to the constructor as `fn`. If you use `run_folktables.py`, you can add a new constraint function by following the steps:
+
+1. Add a `.yaml` file with `import_name: {FunctionName}`, along with the desired batch size and bound (*to be reworked for more generality*), to the `experiments/conf/constraint` folder
+2. Import it in `src/constraints/__init__.py` as in step 2 above.
+
+Now, to run the code with your constraint, use the `constraint` field in the main config.
 
 ## License and terms of use
 
