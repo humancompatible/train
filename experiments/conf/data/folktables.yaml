@@ -1,0 +1,4 @@
+task: income
+state: OK
+download: False
+path: 'C:\Users\andre\humancompatible-train\experiments\utils\raw_data\income\'
