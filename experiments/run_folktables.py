@@ -303,7 +303,7 @@ def run(cfg: DictConfig) -> None:
             weights_to_eval = wtrial[exp_idx]
             for alg_iteration, w in enumerate(weights_to_eval):
                 if CONSTRAINT == "loss":
-                    c_f = one_sided_loss_constr
+                    c_f = constraint_fn
                     c_loss_fn = nn.BCEWithLogitsLoss()
                 print(f"{exp_idx} | {alg_iteration}", end="\r")
                 net.load_state_dict(w)
