@@ -1,8 +1,11 @@
+defaults:
+  - _self_
+  - alg: sslalm
+  - constraint: eq_loss
+  - data: folktables
+
 alg: ???
-
-constraint: loss
-loss_bound: 0.005
-
+constraint: ???
 data: ???
 
 n_runs: 10

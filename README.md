@@ -40,10 +40,11 @@ pip install -r requirements.txt
 
 This repository uses [Hydra](https://hydra.cc/) to manage parameters; it is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
 * To change the parameters of the experiment - the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
-* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name.yaml}`
-* To change algorithm hyperparameters, use `alg/{algorithm_name.yaml}`.
+* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
+* To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
+* To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
 
-In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py +data=folktables +alg=sslalm`.
+In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`.
 This will start 10 runs of the SSL-ALM algorithm, 30 seconds each. Repeat for the other algorithms by changing the `alg` parameter.
 The results will be saved, by default, to ```experiments/utils/saved_models``` and ```experiments/utils/exp_results```.
 
@@ -57,13 +58,11 @@ The benchmark comprises the following algorithms:
 ### Producing plots
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
 
-**Warning**: As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that `folktables` will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
+**Warning**: As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that Folktables will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
 
 ## Extending the benchmark
 
-To add a different constraint formulation, you can use the ```FairnessConstraint``` class by passing your callable function to the constructor as ```fn```.
-
-To add a new algorithm, you can subclass the ```Algorithm``` class. Before you can run it, you will need to follow these steps:
+**To add a new algorithm**, you can subclass the ```Algorithm``` class. Before you can run it, you will need to follow these steps:
 1. In the `experiments/conf/alg` folder, add a `.yaml` file with `import_name: {ClassName}` (so the code knows which algorithm to import) and the desired keyword parameter values under `params`:
 
 ```
@@ -74,9 +73,13 @@ params:
   param_name_2: value
 ```
 
-2. In `src/__init__.py`, add `from .{filename} import {ClassName}` (so the code is able to import it).
+2. In `src/algorithms/__init__.py`, add `from .{filename} import {ClassName}` (so the code is able to import it).
 
-Now you can run the algorithm by executing `python run_folktables.py +data=folktables +alg={yaml_file_name}`.
+Now you can run the algorithm by executing `python run_folktables.py data=folktables alg={yaml_file_name}`, or by changing the experiment config files.
+
+**To add a different constraint formulation**, you can use the `FairnessConstraint` class by passing your callable function to the constructor as `fn`.
+Add a `.yaml` file with `import_name: {FunctionName}`, along with the desired batch size and bound (*to be reworked for more generality*), to the `experiments/conf/constraint` folder, and import it in `src/constraints/__init__.py` the same way as above.
+To run the code with your constraint, use the `constraint` field in the main config.
 
 ## License and terms of use
 

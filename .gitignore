@@ -9,6 +9,7 @@ examples/data
 experiments/data
 .vscode/
 plots/
+outputs/
 
 
 # Byte-compiled / optimized / DLL files

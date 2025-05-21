@@ -7,7 +7,7 @@ import pandas as pd
 import torch
 from fairret.metric import *
 from fairret.statistic import *
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 from torch import nn, tensor
 from torch.utils.data import TensorDataset
 from utils.load_folktables import prepare_folktables
@@ -19,14 +19,16 @@ from src.constraints import FairnessConstraint
 
 @hydra.main(version_base=None, config_path="conf", config_name="experiment")
 def run(cfg: DictConfig) -> None:
+    print(OmegaConf.to_yaml(cfg))
     N_RUNS = cfg.n_runs
     FT_STATE = cfg.data.state
     FT_TASK = cfg.data.task
     DOWNLOAD_DATA = cfg.data.download
     DATA_PATH = cfg.data.path
     
-    CONSTRAINT = cfg.constraint
-    LOSS_BOUND = cfg.loss_bound
+    # CONSTRAINT = cfg.constraint
+    CONSTRAINT = 'eq_loss'
+    LOSS_BOUND = cfg.constraint.bound
 
     if cfg.device == "cpu":
         device = "cpu"
@@ -199,26 +201,26 @@ def run(cfg: DictConfig) -> None:
         if False:
             pass
         else:
-            constraint_fn_module = importlib.import_module("src.constraints.constraint_fns")
-            constraint_fn = getattr(constraint_fn_module, 'one_sided_loss_constr')
+            constraint_fn_module = importlib.import_module("src.constraints")
+            constraint_fn = getattr(constraint_fn_module, cfg.constraint.import_name)
 
             loss_fn = nn.BCEWithLogitsLoss()
-            cf1 = lambda net, d: constraint_fn(loss_fn, net, d) - cfg.loss_bound
+            cf1 = lambda net, d: constraint_fn(loss_fn, net, d) - cfg.constraint.bound
             cf2 = (
-                lambda net, d: -constraint_fn(loss_fn, net, d) - cfg.loss_bound
+                lambda net, d: -constraint_fn(loss_fn, net, d) - cfg.constraint.bound
             )
             c1 = FairnessConstraint(
                 train_ds,
                 [w_idx_train, nw_idx_train],
                 fn=cf1,
-                batch_size=cfg.alg.params.batch_size,
+                batch_size=cfg.constraint.c_batch_size,
                 seed=EXP_IDX,
             )
             c2 = FairnessConstraint(
                 train_ds,
                 [w_idx_train, nw_idx_train],
                 fn=cf2,
-                batch_size=cfg.alg.params.batch_size,
+                batch_size=cfg.constraint.c_batch_size,
                 seed=EXP_IDX,
             )
             
@@ -302,7 +304,7 @@ def run(cfg: DictConfig) -> None:
         for exp_idx in range(N_RUNS):
             weights_to_eval = wtrial[exp_idx]
             for alg_iteration, w in enumerate(weights_to_eval):
-                if CONSTRAINT == "loss":
+                if CONSTRAINT == "eq_loss":
                     c_f = constraint_fn
                     c_loss_fn = nn.BCEWithLogitsLoss()
                 print(f"{exp_idx} | {alg_iteration}", end="\r")
