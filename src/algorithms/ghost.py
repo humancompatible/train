@@ -90,8 +90,12 @@ class StochasticGhost(Algorithm):
 
         rng = np.random.default_rng(seed=seed)
         run_start = timeit.default_timer()
-
-        for iteration in range(0, max_iter):
+        
+        iteration = 0
+        while True:
+            iteration += 1
+            if max_iter is not None and iteration >= max_iter:
+                break
             current_time = timeit.default_timer()
             self.history["time"].append(current_time - run_start)
 

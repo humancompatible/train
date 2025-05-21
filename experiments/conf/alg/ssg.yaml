@@ -1,3 +1,4 @@
+# name of the algorithm class to import form src.algorithms
 import_name: SSG
 
 params:
