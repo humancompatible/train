@@ -1,7 +1,8 @@
-import torch
-from torch.utils.data import SubsetRandomSampler, DataLoader
-from typing import Iterable, Callable
+from typing import Callable, Iterable
+
 import numpy as np
+import torch
+from torch.utils.data import DataLoader, SubsetRandomSampler
 
 
 def _dataloader_from_subset(dataset, indices, *args, **kwargs):

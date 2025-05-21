@@ -1,18 +1,14 @@
-from sklearn.model_selection import train_test_split
-import numpy as np
 import os
 import sys
+
+import numpy as np
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 sys.path.append("..")
 
-from folktables import (
-    ACSDataSource,
-    ACSPublicCoverage,
-    ACSEmployment,
-    ACSIncome,
-    generate_categories,
-)
+from folktables import (ACSDataSource, ACSEmployment, ACSIncome,
+                        ACSPublicCoverage, generate_categories)
 
 RAC1P_WHITE = 1
 

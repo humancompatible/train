@@ -1,7 +1,8 @@
-import torch
-from typing import Iterable, Callable
 from itertools import cycle
+from typing import Callable, Iterable
+
 import numpy as np
+import torch
 
 
 def _dataloader_from_subset(dataset, indices, *args, **kwargs):

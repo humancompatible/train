@@ -1,19 +1,18 @@
-import pandas as pd
-import numpy as np
-import scipy as sp
-from copy import deepcopy
-from scipy.optimize import linprog
-from qpsolvers import solve_qp
-
 # import autoray as ar
 import timeit
+from copy import deepcopy
+
+import numpy as np
+import pandas as pd
+import scipy as sp
+import torch
+from fairret.statistic import *
+from qpsolvers import solve_qp
+from scipy.optimize import linprog
 
 from src.algorithms.Algorithm import Algorithm
 from src.algorithms.c_utils.constraint_fns import *
-
-from fairret.statistic import *
 from src.algorithms.utils import net_params_to_tensor
-import torch
 
 
 class StochasticGhost(Algorithm):

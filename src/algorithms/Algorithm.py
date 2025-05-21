@@ -1,6 +1,8 @@
+from typing import Callable, Iterable
+
 from torch.nn import Module
 from torch.utils.data import Dataset
-from typing import Callable, Iterable
+
 from src.algorithms.c_utils.constraint import FairnessConstraint
 
 

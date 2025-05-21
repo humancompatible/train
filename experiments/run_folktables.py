@@ -8,22 +8,23 @@ import torch
 from fairret.metric import *
 from fairret.statistic import *
 from omegaconf import DictConfig
-from src.constraints import FairnessConstraint
-from src.constraints.constraint_fns import one_sided_loss_constr
 from torch import nn, tensor
 from torch.utils.data import TensorDataset
-
 from utils.load_folktables import load_folktables_torch
 from utils.network import SimpleNet
+
+from src.constraints import FairnessConstraint
+from src.constraints.constraint_fns import one_sided_loss_constr
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="experiment")
 def run(cfg: DictConfig) -> None:
     N_RUNS = cfg.n_runs
     FT_STATE = cfg.data.state
-    TASK = cfg.data.task
+    FT_TASK = cfg.data.task
     DOWNLOAD_DATA = cfg.data.download
     DATA_PATH = cfg.data.path
+    
     CONSTRAINT = cfg.constraint
     LOSS_BOUND = cfg.loss_bound
 
@@ -44,9 +45,8 @@ def run(cfg: DictConfig) -> None:
 
     DTYPE = torch.float32
 
-    FT_DATASET = TASK
     torch.set_default_dtype(DTYPE)
-    DATASET_NAME = FT_DATASET + "_" + FT_STATE
+    DATASET_NAME = FT_TASK + "_" + FT_STATE
 
     (
         X_train,
@@ -56,7 +56,7 @@ def run(cfg: DictConfig) -> None:
         y_test,
         [w_idx_test, nw_idx_test],
     ) = load_folktables_torch(
-        FT_DATASET,
+        FT_TASK,
         state=FT_STATE.upper(),
         random_state=42,
         make_unbalanced=False,
@@ -67,7 +67,7 @@ def run(cfg: DictConfig) -> None:
     X_train_tensor = tensor(X_train, dtype=DTYPE)
     y_train_tensor = tensor(y_train, dtype=DTYPE)
     train_ds = TensorDataset(X_train_tensor, y_train_tensor)
-    print(f"Train data loaded: {(FT_DATASET, FT_STATE)}")
+    print(f"Train data loaded: {(FT_TASK, FT_STATE)}")
     print(f"Data shape: {X_train_tensor.shape}")
 
     saved_models_path = os.path.abspath(
@@ -241,7 +241,6 @@ def run(cfg: DictConfig) -> None:
 
         ## SAVE MODEL ##
         torch.save(net.state_dict(), model_path)
-        print("")
 
     # Save DataFrames to CSV files
     utils_path = os.path.abspath(
@@ -262,6 +261,10 @@ def run(cfg: DictConfig) -> None:
     samples_trial.to_csv(os.path.join(utils_path, fname + "_samples.csv"))
     print("Saved!")
 
+    #############################################################
+    ### CALCULATE TEST SET STATS ON EVERY ALGORITHM ITERATION ###
+    #############################################################
+
     print("----")
     print("")
     wlen = max([len(tr) for tr in wtrial])
@@ -273,9 +276,6 @@ def run(cfg: DictConfig) -> None:
         index=index, columns=["Loss", "C1", "C2", "SampleSize", "time"]
     )
     full_stats.sort_index(inplace=True)
-
-    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    # torch.set_default_device(device)
 
     loss_fn = nn.BCEWithLogitsLoss()
 

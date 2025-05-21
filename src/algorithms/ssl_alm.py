@@ -1,11 +1,12 @@
-from copy import deepcopy
 import timeit
+from copy import deepcopy
 from typing import Callable
+
 import numpy as np
 import torch
 
-from src.algorithms.utils import net_params_to_tensor, _set_weights
 from src.algorithms.Algorithm import Algorithm
+from src.algorithms.utils import _set_weights, net_params_to_tensor
 
 
 class SSLALM(Algorithm):
