@@ -10,7 +10,7 @@ from fairret.statistic import *
 from omegaconf import DictConfig
 from torch import nn, tensor
 from torch.utils.data import TensorDataset
-from utils.load_folktables import load_folktables_torch
+from utils.load_folktables import prepare_folktables
 from utils.network import SimpleNet
 
 from src.constraints import FairnessConstraint
@@ -55,7 +55,7 @@ def run(cfg: DictConfig) -> None:
         X_test,
         y_test,
         [w_idx_test, nw_idx_test],
-    ) = load_folktables_torch(
+    ) = prepare_folktables(
         FT_TASK,
         state=FT_STATE.upper(),
         random_state=42,
@@ -241,6 +241,7 @@ def run(cfg: DictConfig) -> None:
 
         ## SAVE MODEL ##
         torch.save(net.state_dict(), model_path)
+        print("")
 
     # Save DataFrames to CSV files
     utils_path = os.path.abspath(

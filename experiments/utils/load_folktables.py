@@ -13,7 +13,7 @@ from folktables import (ACSDataSource, ACSEmployment, ACSIncome,
 RAC1P_WHITE = 1
 
 
-def load_folktables_torch(
+def prepare_folktables(
     dataset: str = "employment",
     state="AL",
     random_state=None,
