@@ -39,8 +39,8 @@ pip install -r requirements.txt
 ### Running the algorithms
 
 This repository uses [Hydra](https://hydra.cc/) to manage parameters; Hydra is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
-* To change the parameters of the experiment -- the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) -- use `experiment.yaml`. 
-* To change the dataset settings -- such as file location -- or do dataset-specific adjustments, use `data/{dataset_name.yaml}`
+* To change the parameters of the experiment - the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
+* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name.yaml}`
 * To change algorithm hyperparameters, use `alg/{algorithm_name.yaml}`.
 
 In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py +data=folktables +alg=sslalm`.
@@ -66,7 +66,7 @@ To add a different constraint formulation, you can use the ```FairnessConstraint
 To add a new algorithm, you can subclass the ```Algorithm``` class. Before you can run it, you will need to follow these steps:
 1. In `src/__init__.py`, add `from .{filename} import {ClassName}`;
 2. In the `experiments/conf/alg` folder, add a `.yaml` file with `import_name: {ClassName}` and the desired hyperparameter values.
-Now you can run the algorithm by executing `python run_folktables.py +data=folktables +alg={.yaml_file_name}`.
+Now you can run the algorithm by executing `python run_folktables.py +data=folktables +alg={yaml_file_name}`.
 
 ## License and terms of use
 
@@ -95,6 +95,7 @@ For more information, see https://www.census.gov/data/developers/about/terms-of-
 ## Future work
 
 - Add support for fairness constraints with >=2 subgroups
+- Add support to datasets besides Folktables
 
 ## References
 
