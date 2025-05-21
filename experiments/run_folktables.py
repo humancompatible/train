@@ -14,7 +14,7 @@ from utils.load_folktables import prepare_folktables
 from utils.network import SimpleNet
 
 from src.constraints import FairnessConstraint
-from src.constraints.constraint_fns import one_sided_loss_constr
+# from src.constraints.constraint_fns import one_sided_loss_constr
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="experiment")
@@ -203,10 +203,13 @@ def run(cfg: DictConfig) -> None:
             module = importlib.import_module("src.algorithms")
             Optimizer = getattr(module, optimizer_name)
 
+            constraint_fn_module = importlib.import_module("src.constraints.constraint_fns")
+            constraint_fn = getattr(constraint_fn_module, 'one_sided_loss_constr')
+
             loss_fn = nn.BCEWithLogitsLoss()
-            cf1 = lambda net, d: one_sided_loss_constr(loss_fn, net, d) - cfg.loss_bound
+            cf1 = lambda net, d: constraint_fn(loss_fn, net, d) - cfg.loss_bound
             cf2 = (
-                lambda net, d: -one_sided_loss_constr(loss_fn, net, d) - cfg.loss_bound
+                lambda net, d: -constraint_fn(loss_fn, net, d) - cfg.loss_bound
             )
             c1 = FairnessConstraint(
                 train_ds,

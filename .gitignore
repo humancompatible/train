@@ -5,6 +5,7 @@ experiments/utils/exp_results
 experiments/utils/saved_models
 experiments/outputs
 data/
+examples/data
 experiments/data
 .vscode/
 plots/
