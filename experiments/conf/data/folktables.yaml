@@ -1,4 +1,4 @@
 task: income
 state: OK
-download: False
-path: '.\utils\raw_data\income\'
+download: True
+path: .\utils\raw_data\

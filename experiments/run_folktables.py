@@ -7,8 +7,6 @@ import hydra
 import numpy as np
 import pandas as pd
 import torch
-# from fairret.metric import *
-# from fairret.statistic import *
 from omegaconf import DictConfig, OmegaConf
 from torch import nn, tensor
 from torch.utils.data import TensorDataset, Subset
@@ -16,7 +14,6 @@ from utils.load_folktables import prepare_folktables
 from utils.network import SimpleNet
 
 from src.constraints import FairnessConstraint
-# from src.constraints.constraint_fns import one_sided_loss_constr
 
 
 @hydra.main(version_base=None, config_path="conf", config_name="experiment")
@@ -90,7 +87,7 @@ def run(cfg: DictConfig) -> None:
 
     # experiment loop
     for EXP_IDX in range(N_RUNS):
-        # torch.manual_seed(EXP_IDX)
+        torch.manual_seed(EXP_IDX)
         model_path = model_name + f"_trial{EXP_IDX}.pt"
 
         net = SimpleNet(in_shape=X_test.shape[1], out_shape=1, dtype=DTYPE).to(device)
