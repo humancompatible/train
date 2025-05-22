@@ -37,6 +37,7 @@ packaging==25.0
 pandas==2.2.3
 parso==0.8.4
 pillow==11.2.1
+pip-system-certs==4.0 
 platformdirs==4.3.8
 POT==0.9.5
 prompt_toolkit==3.0.51
