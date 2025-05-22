@@ -28,6 +28,7 @@ source fairbenchenv/bin/activate
 git clone https://github.com/humancompatible/train.git
 cd train
 pip install -r requirements.txt
+pip install .
 ```
 <!-- Install via pip -->
 <!-- ``` -->
