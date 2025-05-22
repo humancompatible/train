@@ -19,9 +19,16 @@ requests, please file a
 The code requires Python version ```3.10```.
 
 1. Create a virtual environment
+
+**bash** (Linux)
 ```
 python3.10 -m venv fairbenchenv
 source fairbenchenv/bin/activate
+```
+**cmd** (Windows)
+```
+python3.10 -m venv fairbenchenv
+fairbenchenv\Scripts\activate.bat
 ```
 2. Install from source.
 ```
