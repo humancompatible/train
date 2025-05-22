@@ -38,27 +38,40 @@ pip install -r requirements.txt
 
 ### Running the algorithms
 
-This repository uses [Hydra](https://hydra.cc/) to manage parameters; it is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
-* To change the parameters of the experiment - the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
-* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
-* To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
-* To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
-
-In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`.
-This will start 10 runs of the SSL-ALM algorithm, 30 seconds each. Repeat for the other algorithms by changing the `alg` parameter.
-The results will be saved, by default, to ```experiments/utils/saved_models``` and ```experiments/utils/exp_results```.
-
-To learn more about using Hydra, please check out the [official tutorial](https://hydra.cc/docs/tutorials/basic/your_first_app).
-
 The benchmark comprises the following algorithms:
 - Stochastic Ghost [[2]](#2),
 - SSL-ALM [[3]](#3),
 - Stochastic Switching Subgradient [[4]](#4).
 
+To reproduce the experiments of the paper, run the following:
+``` python
+cd experiments
+python run_folktables.py data=folktables alg=sslalm
+python run_folktables.py data=folktables alg=alm
+python run_folktables.py data=folktables alg=ghost
+python run_folktables.py data=folktables alg=ssg
+python run_folktables.py data=folktables alg=sgd     # baseline, no fairness
+python run_folktables.py data=folktables alg=fairret # baseline, fairness with regularizer
+```
+Each command will start 10 runs of the `alg`, 30 seconds each.
+The results will be saved to `experiments/utils/saved_models` and `experiments/utils/exp_results`.
+<!-- In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`. -->
+<!-- Repeat for the other algorithms by changing the `alg` parameter. -->
+
+This repository uses [Hydra](https://hydra.cc/) to manage parameters; see `experiments/conf` for configuration files. 
+* To change the parameters of the experiment, such as the number of runs for each algorithm, run time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
+* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
+* To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
+* To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
+
+<!-- ; it is installed as one of the dependencies. -->
+<!-- To learn more about using Hydra, please check out the [official tutorial](https://hydra.cc/docs/tutorials/basic/your_first_app). -->
+
 ### Producing plots
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
 
-**Warning**: As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that Folktables will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
+> [!WARNING] 
+> As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that Folktables will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
 
 ## Extending the benchmark
 
