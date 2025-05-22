@@ -11,7 +11,6 @@ from qpsolvers import solve_qp
 from scipy.optimize import linprog
 
 from src.algorithms.Algorithm import Algorithm
-from src.algorithms.c_utils.constraint_fns import *
 from src.algorithms.utils import net_params_to_tensor
 
 
@@ -71,7 +70,7 @@ class StochasticGhost(Algorithm):
 
     def optimize(
         self,
-        geomp,
+        alpha,
         stepsize_rule="inv_iter",
         zeta=0.5,
         gamma0=0.1,
@@ -107,14 +106,14 @@ class StochasticGhost(Algorithm):
             if stepsize_rule == "inv_iter":
                 gamma = gamma0 / (iteration + 1) ** zeta
             elif stepsize_rule == "dimin":
-                if iteration == 0:
+                if iteration == 1:
                     gamma = gamma0
                 else:
                     gamma *= 1 - zeta * gamma
 
-            Nsamp = rng.geometric(p=geomp) - 1
+            Nsamp = rng.geometric(p=alpha) - 1
             while (2 ** (Nsamp + 1)) > max_sample_size:
-                Nsamp = rng.geometric(p=geomp) - 1
+                Nsamp = rng.geometric(p=alpha) - 1
 
             self.history["n_samples"].append(3 * (1 + 2 ** (Nsamp + 1)))
             dsols = np.zeros((4, n))
@@ -205,7 +204,7 @@ class StochasticGhost(Algorithm):
             # aggregate solutions to the subproblem according to Eq. 23
             dsol = dsols[0, :] + (
                 dsols[3, :] - 0.5 * dsols[1, :] - 0.5 * dsols[2, :]
-            ) / (geomp * ((1 - geomp) ** (Nsamp)))
+            ) / (alpha * ((1 - alpha) ** (Nsamp)))
 
             start = 0
             print(f"{iteration}", end="\r")
