@@ -1,6 +1,6 @@
 # Benchmarking Stochastic Approximation Algorithms for Fairness-Constrained Training of Deep Neural Networks
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![Setup](https://github.com/humancompatible/train/actions/workflows/setup.yml/badge.svg)](https://github.com/humancompatible/train/actions/workflows/setup.yml)
 
 This repository provides a tool to compare stochastic-constrained stochastic optimization algorithms on a _fair learning_ task.
 
