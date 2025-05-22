@@ -1,1 +1,10 @@
 # name of the algorithm class to import form src.algorithms
+import_name: fairret
+
+params:
+  statistic: Accuracy
+  loss: NormLoss
+  lr: 0.05
+  epochs: 10
+  pmult: 0.5
+  batch_size: 8
