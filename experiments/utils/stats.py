@@ -5,7 +5,7 @@ import torch
 from fairret.statistic import *
 from sklearn.metrics import auc, roc_curve
 
-from src.algorithms.c_utils.constraint_fns import *
+from src.constraints.constraint_fns import *
 
 
 def fair_stats(p_1, y_1, p_2, y_2):
