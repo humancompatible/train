@@ -30,12 +30,12 @@ source fairbenchenv/bin/activate
 python3.10 -m venv fairbenchenv
 fairbenchenv\Scripts\activate.bat
 ```
-2. Install from source.
+2. Install from source (*as an editable package*).
 ```
 git clone https://github.com/humancompatible/train.git
 cd train
 pip install -r requirements.txt
-pip install .
+pip install -e .
 ```
 <!-- Install via pip -->
 <!-- ``` -->
