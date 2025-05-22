@@ -70,9 +70,6 @@ This repository uses [Hydra](https://hydra.cc/) to manage parameters; see `exper
 ### Producing plots
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
 
-> [!WARNING] 
-> As of 21/05, Folktables seems to be unable to connect to the American census servers. This means that downloading the dataset through the code is not possible. Manual download requires two files: the .csv dataset, at https://www2.census.gov/programs-surveys/acs/data/pums/`{year}`/`{horizon}`, and the corresponding .csv description, at https://www2.census.gov/programs-surveys/acs/tech_docs/pums/data_dict. After downloading the files, set the path in `experiments/conf/data/folktables.yaml`. By default, the files will be placed in `experiments/utils/raw_data/{task}/{year}/{horizon}` (e.g. `experiments/utils/raw_data/income/2018/1-Year/{filename}.csv`). If you decide to set a custom path, keep in mind that Folktables will look for .csv files at `{your_custom_path}/{year}/{horizon}/`.
-
 ## Extending the benchmark
 
 **To add a new algorithm**, you can subclass the ```Algorithm``` class. Before you can run it, you will need to follow these steps:
