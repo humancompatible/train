@@ -28,7 +28,6 @@ jobs:
         python -m pip install flake8 pytest
         pip install -r requirements.txt
         pip install .
-    - run: Install successful!
 
   run-on-windows:
     name: Setup on windows
@@ -50,7 +49,6 @@ jobs:
         python -m pip install flake8 pytest
         pip install -r requirements.txt
         pip install .
-    - run: Install successful!
 
   run-on-macos:
     name: Setup on macos
@@ -72,4 +70,3 @@ jobs:
         python -m pip install flake8 pytest
         pip install -r requirements.txt
         pip install .
-    - run: Install successful!
