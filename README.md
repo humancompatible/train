@@ -53,10 +53,11 @@ python run_folktables.py data=folktables alg=ssg
 python run_folktables.py data=folktables alg=sgd     # baseline, no fairness
 python run_folktables.py data=folktables alg=fairret # baseline, fairness with regularizer
 ```
-<!-- In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`. -->
 Each command will start 10 runs of the `alg`, 30 seconds each.
-<!-- Repeat for the other algorithms by changing the `alg` parameter. -->
 The results will be saved to `experiments/utils/saved_models` and `experiments/utils/exp_results`.
+
+<!-- In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`. -->
+<!-- Repeat for the other algorithms by changing the `alg` parameter. -->
 
 This repository uses [Hydra](https://hydra.cc/) to manage parameters; see `experiments/conf` for configuration files. 
 <!-- ; it is installed as one of the dependencies. -->
