@@ -55,17 +55,16 @@ python run_folktables.py data=folktables alg=fairret # baseline, fairness with r
 ```
 Each command will start 10 runs of the `alg`, 30 seconds each.
 The results will be saved to `experiments/utils/saved_models` and `experiments/utils/exp_results`.
-
 <!-- In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`. -->
 <!-- Repeat for the other algorithms by changing the `alg` parameter. -->
 
 This repository uses [Hydra](https://hydra.cc/) to manage parameters; see `experiments/conf` for configuration files. 
-<!-- ; it is installed as one of the dependencies. -->
 * To change the parameters of the experiment, such as the number of runs for each algorithm, run time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
 * To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
 * To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
 * To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
 
+<!-- ; it is installed as one of the dependencies. -->
 <!-- To learn more about using Hydra, please check out the [official tutorial](https://hydra.cc/docs/tutorials/basic/your_first_app). -->
 
 ### Producing plots
