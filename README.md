@@ -38,22 +38,34 @@ pip install -r requirements.txt
 
 ### Running the algorithms
 
-This repository uses [Hydra](https://hydra.cc/) to manage parameters; it is installed as one of the dependencies. The _.yaml_ files are stored in the `experiments/conf` folder. 
-* To change the parameters of the experiment - the number of runs for each algorithm, maximum time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
-* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
-* To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
-* To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
-
-In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`.
-This will start 10 runs of the SSL-ALM algorithm, 30 seconds each. Repeat for the other algorithms by changing the `alg` parameter.
-The results will be saved, by default, to ```experiments/utils/saved_models``` and ```experiments/utils/exp_results```.
-
-To learn more about using Hydra, please check out the [official tutorial](https://hydra.cc/docs/tutorials/basic/your_first_app).
-
 The benchmark comprises the following algorithms:
 - Stochastic Ghost [[2]](#2),
 - SSL-ALM [[3]](#3),
 - Stochastic Switching Subgradient [[4]](#4).
+
+To reproduce the experiments of the paper, run the following:
+``` python
+cd experiments
+python run_folktables.py data=folktables alg=sslalm
+python run_folktables.py data=folktables alg=alm
+python run_folktables.py data=folktables alg=ghost
+python run_folktables.py data=folktables alg=ssg
+python run_folktables.py data=folktables alg=sgd     # baseline, no fairness
+python run_folktables.py data=folktables alg=fairret # baseline, fairness with regularizer
+```
+<!-- In the repository, we include the configuration needed to reproduce the experiments in the paper. To do so, go to `experiments` and run `python run_folktables.py data=folktables alg=sslalm`. -->
+Each command will start 10 runs of the `alg`, 30 seconds each.
+<!-- Repeat for the other algorithms by changing the `alg` parameter. -->
+The results will be saved to `experiments/utils/saved_models` and `experiments/utils/exp_results`.
+
+This repository uses [Hydra](https://hydra.cc/) to manage parameters; see `experiments/conf` for configuration files. 
+<!-- ; it is installed as one of the dependencies. -->
+* To change the parameters of the experiment, such as the number of runs for each algorithm, run time, the dataset used (*note: for now supports only Folktables*) - use `experiment.yaml`. 
+* To change the dataset settings - such as file location - or do dataset-specific adjustments, use `data/{dataset_name}.yaml`
+* To change algorithm hyperparameters, use `alg/{algorithm_name}.yaml`.
+* To change constraint hyperparameters, use `constraint/{constraint_name}.yaml`
+
+<!-- To learn more about using Hydra, please check out the [official tutorial](https://hydra.cc/docs/tutorials/basic/your_first_app). -->
 
 ### Producing plots
 The plots and tables like the ones in the paper can be produced using the two notebooks. `experiments/algo_plots.ipynb` houses the convergence plots, and `experiments/model_plots.ipynb` - all the others.
