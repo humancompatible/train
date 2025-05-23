@@ -1,0 +1,16 @@
+defaults:
+  - _self_
+  # REMOVE
+  - alg: sslalm
+  - constraint: eq_loss
+  - data: folktables
+
+alg: ???
+constraint: ???
+data: ???
+model:
+
+n_runs: 10
+run_maxtime: 30
+run_maxiter: null
+device: cpu

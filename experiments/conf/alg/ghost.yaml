@@ -1,0 +1,12 @@
+# name of the algorithm class to import form src.algorithms
+import_name: StochasticGhost
+
+params:
+  alpha: 0.4
+  beta: 10.0
+  gamma0: 0.02
+  rho: 0.8
+  lamb: 0.5
+  zeta: 0.001
+  tau: 1
+  stepsize_rule: dimin
