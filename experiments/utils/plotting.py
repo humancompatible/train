@@ -15,6 +15,7 @@ def plot_iter(
     q2=0.75,
     f_ylim=(0, 0.75),
     c_ylim=(-0.01, 0.01),
+    w = 14
 ):  # save=False, dataset_name=None):
     q1 = q1
     q2 = q2
@@ -27,7 +28,7 @@ def plot_iter(
 
     f = plt.figure()
 
-    ax1 = f.add_subplot()
+    ax1 = f.add_subplot(1,2,1)
 
     ax1.fill_between(x=means.index, y1=q_lower["Loss"], y2=q_higher["Loss"], alpha=0.4)
     ax1.plot(q_lower["Loss"], label=f"Q{int(q1 * 100)}", c="black", lw=0.6)
@@ -47,8 +48,8 @@ def plot_iter(
     # if save:
     # f.savefig('C:/Users/andre/docs/plots/sslalm/income_race/loss
 
-    f_ = plt.figure()
-    ax2 = f_.add_subplot()
+    # f_ = plt.figure()
+    ax2 = f.add_subplot(1,2,2)
 
     ax2.fill_between(x=means.index, y1=q_lower["C1"], y2=q_higher["C1"], alpha=0.4)
     ax2.plot(q_lower["C1"], ls="-", label=f"Q{int(q1 * 100)}", c="black", lw=0.6)
@@ -72,14 +73,16 @@ def plot_iter(
     )
     ax2.set_ylabel("$L_w-L_b$")
     ax2.legend()
-    return f, f_
+    
+    f.set_figwidth(w)
+    f.tight_layout()
+    return f
 
 
-def plot_trajectories(data, lb, x_axis, alpha=0.5, lw=1, legend=True):
+def plot_trajectories(data, lb, x_axis, alpha=0.5, lw=1, legend=True, w=14):
     f = plt.figure()
-    ax1 = f.add_subplot()
-    f = plt.figure()
-    ax2 = f.add_subplot()
+    ax1 = f.add_subplot(1,2,1)
+    ax2 = f.add_subplot(1,2,2)
     for EXP_NUM in data["trial"].unique():
         traj = data[data["trial"] == EXP_NUM]
         if x_axis == "time":
@@ -112,7 +115,8 @@ def plot_trajectories(data, lb, x_axis, alpha=0.5, lw=1, legend=True):
     ax2.set_ylabel("$L_w-L_b$")
     if legend:
         ax2.legend()
-    # f.show()
+    f.set_figwidth(w)
+    return f
 
 
 def plot_time(
@@ -125,6 +129,7 @@ def plot_time(
     q2=0.75,
     f_ylim=(0.4, 0.75),
     c_ylim=(-0.06, 0.07),
+    w = 14
 ):
     q3 = 0.5
 
@@ -162,8 +167,9 @@ def plot_time(
     q_higher = trials_gr.quantile(q=q2, interpolation="higher")
 
     f = plt.figure()
+    # f.set_figwidth()
 
-    ax1 = f.add_subplot()
+    ax1 = f.add_subplot(1,2,1)
 
     ax1.fill_between(x=means.index, y1=q_lower["Loss"], y2=q_higher["Loss"], alpha=0.4)
     ax1.plot(q_lower["Loss"], label=f"Q{int(q1 * 100)}", c="black", lw=0.6)
@@ -182,8 +188,8 @@ def plot_time(
     ax1.set_ylabel("Loss")
     ax1.legend()
 
-    f_ = plt.figure()
-    ax2 = f_.add_subplot()
+    # f_ = plt.figure()
+    ax2 = f.add_subplot(1,2,2)
 
     ax2.fill_between(x=means.index, y1=q_lower["C1"], y2=q_higher["C1"], alpha=0.4)
     ax2.plot(q_lower["C1"], ls="-", label=f"Q{int(q1 * 100)}", c="black", lw=0.6)
@@ -206,8 +212,9 @@ def plot_time(
     ax2.set_ylabel("$L_w-L_b$")
     ax2.legend()
     ax2.set_ylim(bottom=c_ylim[0], top=c_ylim[1])
+    f.set_figwidth(w)
 
-    return f, f_
+    return f#, f_
 
 
 

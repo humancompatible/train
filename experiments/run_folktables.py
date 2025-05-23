@@ -70,6 +70,11 @@ def run(cfg: DictConfig) -> None:
     train_ds = TensorDataset(X_train_tensor, y_train_tensor)
     print(f"Train data loaded: {(FT_TASK, FT_STATE)}")
     print(f"Data shape: {X_train_tensor.shape}")
+    
+    if 'save_name' in cfg['alg'].keys():
+        alg_save_name = cfg.alg.save_name
+    else:
+        alg_save_name = cfg.alg.import_name
 
     saved_models_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "utils", "saved_models")
@@ -77,8 +82,8 @@ def run(cfg: DictConfig) -> None:
     directory = os.path.join(
         saved_models_path, DATASET_NAME, CONSTRAINT, f"{LOSS_BOUND:.0E}"
     )
-
-    model_name = os.path.join(directory, f"{cfg.alg.import_name}_{LOSS_BOUND}")
+    
+    model_name = os.path.join(directory, f"{alg_save_name}_{LOSS_BOUND}")
 
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -253,7 +258,7 @@ def run(cfg: DictConfig) -> None:
     ctrial = pd.concat(ctrial, keys=range(len(ctrial)))
     samples_trial = pd.concat(samples_trial, keys=range(len(samples_trial)))
 
-    fname = f"{cfg.alg.import_name}_{DATASET_NAME}_{LOSS_BOUND}"
+    fname = f"{alg_save_name}_{DATASET_NAME}_{LOSS_BOUND}"
 
     print(f"Saving to: {fname}")
     ftrial.to_csv(os.path.join(utils_path, fname + "_ftrial.csv"))
@@ -278,6 +283,8 @@ def run(cfg: DictConfig) -> None:
     full_stats.sort_index(inplace=True)
 
     loss_fn = nn.BCEWithLogitsLoss()
+    
+    device = 'cuda' if torch.cuda.is_available() else device
 
     X_test_tensor = tensor(X_test, dtype=DTYPE).to(device)
     y_test_tensor = tensor(y_test, dtype=DTYPE).to(device)
@@ -354,7 +361,7 @@ def run(cfg: DictConfig) -> None:
                     "time": ttrial[exp_idx][alg_iteration],
                 }
 
-    fname = f"{cfg.alg.import_name}_{DATASET_NAME}_{LOSS_BOUND}.csv"
+    fname = f"{alg_save_name}_{DATASET_NAME}_{LOSS_BOUND}.csv"
     print(f"Saving to: {fname}")
     full_stats.to_csv(os.path.join(utils_path, fname))
 
